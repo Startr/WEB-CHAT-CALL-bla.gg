@@ -79,7 +79,8 @@
 --p: 1em;
 --br-sm: 0.6em;
 --shadow: 6;
---minh: calc(100vh - 8em);
+--minh-sm: calc(100vh - 8em);
+--minh: calc(100vh - 4em);
 --d: flex;
 --fd: column;
 --jc: space-between;
@@ -102,7 +103,7 @@ _="on load
       <div id="userStatus"></div>
     </header>
     
-    <div id="auth" class="auth-container" style="--shadow: 8;">
+    <div id="auth" class="auth-container" style="--shadow: 8; --m:0.2em; --p:1em; --bg: var(--container-bg); --br-sm: 1.6em;">
       <form id="authForm" 
         _="on submit 
             halt
