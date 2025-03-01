@@ -12,11 +12,62 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
   <!-- Startr.Style CSS for basic layout -->
   <link rel="stylesheet" href="https://startr.style/style.css">
+  <link rel="stylesheet" href="style.css">
   <style>
     video, div {
       border-radius: 10px;
       max-width: 100%;
       overflow: hidden;
+    }
+    
+    #connectionStatus {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      color: white;
+      background-color: #aaa;
+      z-index: 100;
+    }
+    
+    #connectionStatus.connected {
+      background-color: #4CAF50;
+    }
+    
+    #connectionStatus.disconnected {
+      background-color: #F44336;
+    }
+    
+    #connectionStatus.connecting {
+      background-color: #FFC107;
+    }
+    
+    .status-message {
+      font-size: 0.8rem;
+      margin-top: -5px;
+      margin-bottom: 5px;
+      min-height: 1.2rem;
+      text-align: left;
+    }
+    
+    #usernameStatus.available {
+      color: #4CAF50;
+    }
+    
+    #usernameStatus.unavailable {
+      color: #F44336;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .shake {
+      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
   </style>
  
@@ -28,19 +79,170 @@
 --p: 1em;
 --br-sm: 0.6em;
 --shadow: 6;
---minh: calc(100vh - 6em);
+--minh: calc(100vh - 8em);
 --d: flex;
 --fd: column;
 --jc: space-between;
 zoom:1.06;
-">
-  <div id="app"></div>
+"
+_="on load 
+     if localStorage.getItem('blagg_theme') == 'dark'
+       add .dark-theme to me
+       set #themeToggle.innerHTML to '☀️'
+     end
+     
+     call checkDatabaseConnection()
+   end">
+
+  <div id="connectionStatus" class="connecting">Connecting...</div>
+
+  <div id="app" class="container fade-transition fade-in">
+    <header>
+      <h1>bla.gg</h1>
+      <div id="userStatus"></div>
+    </header>
+    
+    <div id="auth" class="auth-container" style="--shadow: 8;">
+      <form id="authForm" 
+        _="on submit 
+            halt
+            add .loading to #loginBtn
+            call app.handleLogin() 
+            remove .loading from #loginBtn">
+        <input type="text" id="username" placeholder="Username" autocomplete="username" required
+          _="on keyup[key=='Enter'] 
+              if #password.value != '' 
+                trigger submit on #authForm
+            end
+            on keyup debounced at 500ms
+              if my value is not empty
+                call app.checkUsernameAvailability(my value)
+              else
+                remove .available .unavailable from #usernameStatus
+                set #usernameStatus.textContent to ''
+              end
+            end">
+        <div id="usernameStatus" class="status-message"></div>
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password" required
+          _="on keyup[key=='Enter'] 
+              if #username.value != '' 
+                trigger submit on #authForm">
+        <button type="submit" id="loginBtn">Login</button>
+        <button type="button" id="signupBtn" 
+          _="on click 
+              add .loading to me
+              if #usernameStatus.classList contains 'unavailable'
+                remove .loading from me
+                call #username.focus()
+                add .shake to #usernameStatus
+                wait 500ms
+                remove .shake from #usernameStatus
+              else
+                call app.handleSignup() 
+                remove .loading from me
+              end">Sign Up</button>
+      </form>
+      <div class="auth-toggle" 
+        _="on click 
+            if #authForm matches .signup-mode
+              remove .signup-mode from #authForm
+              set @innerHTML to 'Need an account? Sign up'
+            else
+              add .signup-mode to #authForm
+              set @innerHTML to 'Already have an account? Log in'
+            end">Need an account? Sign up</div>
+    </div>
+
+    <div id="chat" class="chat-container" style="display: none;">
+      <div class="contacts">
+        <input type="text" id="peerPub" placeholder="Peer's Public Key" 
+          _="on keyup[key=='Enter'] trigger click on #startCallBtn">
+        <button id="startCallBtn" 
+          _="on click 
+              add .loading to me
+              call app.handleStartCall() 
+              remove .loading from me">Start Call</button>
+      </div>
+      
+      <div class="messages" id="messages" 
+        _="on scroll
+            if @scrollTop <= 10 and @dataset.hasMore == 'true'
+              call app.loadMoreMessages()
+            end"></div>
+      
+      <div class="message-input">
+        <input type="text" id="messageInput" placeholder="Type a message..." 
+          _="on keyup[key=='Enter'] 
+              if @value is not empty 
+                call app.handleSendMessage() 
+                set @value to ''
+              end">
+        <button id="sendBtn" 
+          _="on click 
+              if #messageInput.value is not empty
+                add .loading to me
+                call app.handleSendMessage() 
+                remove .loading from me
+              end">Send</button>
+      </div>
+    </div>
+
+    <div id="call" class="call-container" style="display: none;">
+      <div class="video-container">
+        <video id="localVideo" autoplay muted 
+          _="on loadedmetadata add .loaded to me"></video>
+        <video id="remoteVideo" autoplay 
+          _="on loadedmetadata add .loaded to me"></video>
+      </div>
+      <div class="call-controls">
+        <button id="toggleMuteBtn" 
+          _="on click 
+              toggle .muted on me
+              if I match .muted
+                call app.toggleMute(true)
+                set @innerHTML to 'Unmute'
+              else
+                call app.toggleMute(false)
+                set @innerHTML to 'Mute'
+              end">Mute</button>
+        <button id="toggleVideoBtn" 
+          _="on click 
+              toggle .video-off on me
+              if I match .video-off
+                call app.toggleVideo(true)
+                set @innerHTML to 'Turn Video On'
+              else
+                call app.toggleVideo(false)
+                set @innerHTML to 'Turn Video Off'
+              end">Turn Video Off</button>
+        <button id="endCallBtn" 
+          _="on click 
+              add .loading to me
+              call app.handleEndCall() 
+              remove .loading from me">End Call</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Theme toggle button -->
+  <button id="themeToggle" class="theme-toggle" 
+    _="on click 
+        toggle .dark-theme on <body/>
+        if <body/> matches .dark-theme
+          localStorage.setItem('blagg_theme', 'dark')
+          set @innerHTML to '☀️'
+        else
+          localStorage.setItem('blagg_theme', 'light')
+          set @innerHTML to '🌙'
+        end">
+    🌙
+  </button>
 
   <!-- Include GUN (for decentralized DB) -->
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script> <!-- security module -->
   <!-- Include HyperScript library for UI creation -->
-  <script src="https://unpkg.com/hyperscript"></script>
+  <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
   <!-- Our application scripts -->
   <script src="gun.js"></script>
   <script src="webrtc.js"></script>
@@ -51,6 +253,30 @@ zoom:1.06;
       navigator.serviceWorker.register('/sw.js')
         .then(registration => console.log('ServiceWorker registration successful'))
         .catch(err => console.log('ServiceWorker registration failed: ', err));
+    }
+    
+    // Check GUN database connection
+    async function checkDatabaseConnection() {
+      const statusEl = document.getElementById('connectionStatus');
+      
+      try {
+        const connected = await window.blagg.checkConnection();
+        
+        if (connected) {
+          statusEl.textContent = 'Connected';
+          statusEl.className = 'connected';
+        } else {
+          statusEl.textContent = 'Disconnected';
+          statusEl.className = 'disconnected';
+          console.error('Unable to connect to GUN database');
+          setTimeout(checkDatabaseConnection, 5000); // Try again in 5 seconds
+        }
+      } catch (err) {
+        console.error('Connection check error:', err);
+        statusEl.textContent = 'Error';
+        statusEl.className = 'disconnected';
+        setTimeout(checkDatabaseConnection, 5000); // Try again in 5 seconds
+      }
     }
   </script>
 </body>
