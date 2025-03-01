@@ -21,21 +21,36 @@ scoop install cloudflared
 
 ### Quick Start
 
-1. **Start a local web server**
+1. **Start a local web server with custom headers**
+   
+   We've included a custom Python HTTP server (`server.py`) that adds specific headers to silence Chrome's advertising-related warnings. Use this instead of the standard Python HTTP server:
+   
    ```bash
-   # Using Python's built-in server
-   python -m http.server 8080
+   # Using our custom server
+   python3 server.py
+   
+   # Or from the project root using the Makefile
+   make frontend
+   ```
+   
+   Alternatively, you can use other servers:
+   ```bash
+   # Using Python's built-in server (without custom headers)
+   python -m http.server 8000
 
    # Or using Node's http-server
-   npx http-server -p 8080
+   npx http-server -p 8000
 
    # Or using PHP's built-in server
-   php -S localhost:8080
+   php -S localhost:8000
    ```
 
 2. **Start a quick tunnel**
    ```bash
-   cloudflared tunnel --url http://localhost:8080
+   cloudflared tunnel --url http://localhost:8000
+   
+   # Or from the project root using the Makefile
+   make tunnel
    ```
 
 Your frontend will now be available at a randomly generated `*.trycloudflare.com` URL with a valid HTTPS certificate. The URL will be displayed in your terminal.
@@ -78,5 +93,10 @@ Update the following files with your tunnel's domain:
    - Ensure all assets are served over HTTPS
    - Check for mixed content warnings in browser console
    - Verify all WebRTC and WebSocket connections use secure protocols
+   - If you see Chrome advertising warnings, use our custom server (`server.py`) which adds the necessary headers to silence these warnings
+
+4. **Chrome Advertising Warnings**
+   - Our custom server (`server.py`) adds the necessary `Permissions-Policy` headers to silence Chrome's advertising-related warnings
+   - If you're using a different server and seeing these warnings, you'll need to configure it to add the appropriate headers
 
 Note: For persistent URLs and additional features, you can optionally create a Cloudflare account and use named tunnels instead of quick tunnels. 

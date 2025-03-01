@@ -1,6 +1,51 @@
 # WEB-CHAT-CALL-bla.gg
 
-**bla.gg** is an open-source audio/video chat platform that aims to be a lightweight alternative to Skype. It's built with a minimalist tech stack – **Vanilla JavaScript**, **HyperScript** (for UX), **WebRTC** (for peer-to-peer calls), and **GUN.js** (for decentralized identity & messaging). The entire app runs as a **Progressive Web App (PWA)**, meaning it can be installed on devices and even works offline. All communication is peer-to-peer (P2P) by default, with optional self-hosted servers for improved connectivity and bridging to traditional networks. Security is a first-class concern, with end-to-end encryption for messages and secure protocols for calls. 
+**bla.gg** is a fun and lightweight chat platform that lets you connect with friends without the bloat! 🚀 Think Skype, but way cooler and built for privacy-conscious users. We've created it using simple but powerful tools like **Vanilla JavaScript**, **HyperScript**, **WebRTC**, and **GUN.js** to keep things fast and decentralized.
+
+✨ **Amazing Features That Actually Work:**
+- 🔒 End-to-end encrypted messaging - your secrets are safe with us!
+- 📱 Install it as a PWA on any device - works even when offline
+- 🎥 Crystal-clear video calls directly between browsers
+- 🤝 No central servers needed - everything is peer-to-peer
+- 🔐 Create an account in seconds, data stays on your device
+- 💬 Real-time messaging that just works
+- 🌐 Optional self-hosted servers if you want them
+- 🎨 Clean, minimal interface that gets out of your way
+- ⚡ Lightning fast and lightweight
+
+🔜 **Coming Soon:**
+- 📞 Make and receive calls to/from regular phone numbers worldwide
+- 📱 Get your own dedicated phone number in 100+ countries
+- 💼 Business features like custom greeting messages and call forwarding
+- 🔄 Seamless call transfer between devices
+- 📧 Voicemail-to-email transcription
+- 🌐 International toll-free numbers
+- 👥 Virtual phone system for teams
+- 🤖 AI-powered call screening and spam blocking
+- 📊 Advanced call analytics and reporting
+
+Built with privacy and security as top priorities, bla.gg gives you all the features you need for modern communication while keeping your data under your control. No tracking, no ads, just pure peer-to-peer goodness! 
+
+## Quick Start
+
+The project includes a Makefile to simplify common operations:
+
+```bash
+# Start the frontend server with custom headers (silences Chrome ad warnings)
+make frontend
+
+# Start a Cloudflare tunnel to expose your local server with HTTPS
+make tunnel
+
+# Start both the frontend server and Cloudflare tunnel
+make all
+
+# Stop all running services
+make stop
+
+# Start the backend services with Docker Compose
+make backend
+```
 
 ## TODO
 - Fix Kamailio SIP Server integration: Currently, the Kamailio service is disabled in docker-compose.yml due to image availability issues. Need to find a reliable public Docker image for Kamailio or create a custom one.
@@ -21,6 +66,7 @@ The project is organized for clarity and minimalism. Most of the app logic lives
 
 ```plaintext
 bla.gg/
+├── Makefile                  # Commands for common operations
 ├── frontend/
 │   ├── index.html
 │   ├── app.js
@@ -28,6 +74,7 @@ bla.gg/
 │   ├── gun.js
 │   ├── style.css
 │   ├── manifest.webmanifest
+│   ├── server.py             # Custom HTTP server with headers to silence Chrome warnings
 │   └── sw.js
 ├── backend/
 │   ├── docker-compose.yml
@@ -91,4 +138,8 @@ A few notes on the above setup:
 - We have a `<div id="app"></div>` which our script will use as the mounting point for the UI components.
 
 The `style.css` is Startr Style's minimal styling framework. Startr.Style accelerates and standardizes web design through custom property helpers and utilities, all seamlessly integrated within the style attribute. This innovative approach streamlines styling, making it faster and more consistent across projects. By embedding the power of customization directly where it's needed, Startr.Style ensures a lean, efficient workflow without sacrificing flexibility or control.
+
+### Custom HTTP Server
+
+The project includes a custom HTTP server (`server.py`) that adds specific headers to silence Chrome's advertising-related warnings. This server is used instead of the standard Python HTTP server and can be started using the Makefile command `make frontend`.
 
