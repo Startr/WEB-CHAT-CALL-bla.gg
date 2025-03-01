@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bla.gg – P2P Chat</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#317EFB"/>
+  <link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+  <link rel="shortcut icon" href="/icons/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+  <!-- Startr.Style CSS for basic layout -->
+  <link rel="stylesheet" href="https://startr.style/style.css">
+ 
+</head>
+<body style="--m: 0.6em auto;
+--m-sm: 2em auto;
+--maxw: 649px;
+--bg: #F0EFE3;
+--p: 1em;
+--br-sm: 0.6em;
+--shadow: 6;
+--minh: calc(100vh - 6em);
+--d: flex;
+--fd: column;
+--jc: space-between;
+zoom:1.06;
+">
+  <div id="app"></div>
+
+  <!-- Include GUN (for decentralized DB) -->
+  <script src="https://cdn.jsdelivr.net/npm/gun/gun.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script> <!-- security module -->
+  <!-- Include HyperScript library for UI creation -->
+  <script src="https://unpkg.com/hyperscript"></script>
+  <!-- Our application scripts -->
+  <script src="gun.js"></script>
+  <script src="webrtc.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => console.log('ServiceWorker registration successful'))
+        .catch(err => console.log('ServiceWorker registration failed: ', err));
+    }
+  </script>
+</body>
+</html> 

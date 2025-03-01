@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # GUN relay peer
+  gun-relay:
+    build:
+      context: .
+      dockerfile: gun-relay.dockerfile
+    ports:
+      - "8765:8765"
+    restart: unless-stopped
+    networks:
+      - blagg-net
+
+  # TURN/STUN server
+  coturn:
+    image: coturn/coturn
+    ports:
+      - "3478:3478"
+      - "3478:3478/udp"
+      - "5349:5349"
+      - "5349:5349/udp"
+    volumes:
+      - ./turnserver.conf:/etc/coturn/turnserver.conf
+    restart: unless-stopped
+    networks:
+      - blagg-net
+
+  # Janus WebRTC Gateway (for SIP integration)
+  janus:
+    image: canyan/janus-gateway
+    ports:
+      - "8088:8088"
+      - "8089:8089"
+      - "8889:8889"
+      - "8080:8080"
+    volumes:
+      - ./janus/janus.cfg:/usr/local/etc/janus/janus.cfg
+    depends_on:
+      - coturn
+    restart: unless-stopped
+    networks:
+      - blagg-net
+
+  # TODO: Fix Kamailio image availability issue
+  # Kamailio SIP Server - currently disabled due to image availability
+  # kamailio:
+  #   image: linagora/kamailio:5.5.0
+  #   ports:
+  #     - "5060:5060"
+  #     - "5060:5060/udp"
+  #   volumes:
+  #     - ./kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg:ro
+  #   environment:
+  #     - KAMAILIO_DEBUG_LEVEL=3
+  #   depends_on:
+  #     - janus
+  #   restart: unless-stopped
+  #   networks:
+  #     - blagg-net
+
+networks:
+  blagg-net:
+    driver: bridge 

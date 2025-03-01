@@ -1,0 +1,9 @@
+{
+  "name": "blagg-gun-relay",
+  "version": "1.0.0",
+  "description": "GUN relay peer for bla.gg",
+  "main": "server.js",
+  "dependencies": {
+    "gun": "^0.2020.1239"
+  }
+} 
