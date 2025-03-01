@@ -21,6 +21,8 @@ class BlaggApp {
     });
 
     // Expose methods to window for _hyperscript to access
+    // These methods are called directly from HTML elements via _hyperscript attributes
+    // Example: <button _="on click call app.handleLogin()">Login</button>
     window.app = {
       handleLogin: this.handleLogin.bind(this),
       handleSignup: this.handleSignup.bind(this),
@@ -84,6 +86,7 @@ class BlaggApp {
   }
 
   // Handle user login
+  // Called from _hyperscript in the login form: <form _="on submit call app.handleLogin()">
   async handleLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -106,6 +109,7 @@ class BlaggApp {
   }
 
   // Handle user signup
+  // Called from _hyperscript in the signup button: <button _="on click call app.handleSignup()">
   async handleSignup() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
@@ -193,6 +197,7 @@ class BlaggApp {
   }
 
   // Handle sending a message
+  // Called from _hyperscript in the message input and send button
   async handleSendMessage() {
     const input = document.getElementById('messageInput');
     const peerPub = document.getElementById('peerPub').value;
@@ -215,6 +220,7 @@ class BlaggApp {
   }
 
   // Handle starting a call
+  // Called from _hyperscript in the start call button: <button _="on click call app.handleStartCall()">
   async handleStartCall() {
     const peerPub = document.getElementById('peerPub').value;
     
@@ -272,6 +278,7 @@ class BlaggApp {
   }
 
   // Handle ending a call
+  // Called from _hyperscript in the end call button: <button _="on click call app.handleEndCall()">
   handleEndCall() {
     if (this.activeCall) {
       this.activeCall.endCall();
@@ -295,6 +302,7 @@ class BlaggApp {
   }
 
   // Toggle mute for local audio
+  // Called from _hyperscript in the mute button: <button _="on click call app.toggleMute(...)">
   toggleMute(mute) {
     if (this.activeCall && this.activeCall.localStream) {
       const audioTracks = this.activeCall.localStream.getAudioTracks();
@@ -305,6 +313,7 @@ class BlaggApp {
   }
 
   // Toggle video for local video
+  // Called from _hyperscript in the video toggle button: <button _="on click call app.toggleVideo(...)">
   toggleVideo(turnOff) {
     if (this.activeCall && this.activeCall.localStream) {
       const videoTracks = this.activeCall.localStream.getVideoTracks();
@@ -337,12 +346,14 @@ class BlaggApp {
   }
 
   // Load more messages (placeholder for pagination)
+  // Called from _hyperscript in the messages container: <div _="on scroll call app.loadMoreMessages()">
   loadMoreMessages() {
     // This would be implemented to load older messages
     console.log('Loading more messages...');
   }
 
   // Check if a username is available
+  // Called from _hyperscript in the username input: <input _="on keyup debounced at 500ms call app.checkUsernameAvailability(my value)">
   async checkUsernameAvailability(username) {
     if (!username || username.trim() === '') return;
     

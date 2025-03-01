@@ -1,6 +1,6 @@
 # WEB-CHAT-CALL-bla.gg
 
-**bla.gg** is a fun and lightweight chat platform that lets you connect with friends without the bloat! 🚀 Think Skype, but way cooler and built for privacy-conscious users. We've created it using simple but powerful tools like **Vanilla JavaScript**, **HyperScript**, **WebRTC**, and **GUN.js** to keep things fast and decentralized.
+**bla.gg** is a fun and lightweight chat platform that lets you connect with friends without the bloat! 🚀 Think Skype, but way cooler and built for privacy-conscious users. We've created it using simple but powerful tools like **Vanilla JavaScript**, **_hyperscript**, **WebRTC**, and **GUN.js** to keep things fast and decentralized.
 
 ✨ **Amazing Features That Actually Work:**
 - 🔒 End-to-end encrypted messaging - your secrets are safe with us!
@@ -12,6 +12,7 @@
 - 🌐 Optional self-hosted servers if you want them
 - 🎨 Clean, minimal interface that gets out of your way
 - ⚡ Lightning fast and lightweight
+- 🧩 Declarative UI with _hyperscript for maintainable code
 
 🔜 **Coming Soon:**
 - 📞 Make and receive calls to/from regular phone numbers worldwide
@@ -98,7 +99,7 @@ Next, we delve into each part of the implementation in detail.
 
 ## Frontend Implementation (Vanilla JS PWA)
 
-The frontend is built without heavy frameworks – just plain JavaScript, a tiny DOM builder library (HyperScript), and the GUN and WebRTC APIs. The UI is intentionally simple and uncluttered, focusing on core functionality.
+The frontend is built without heavy frameworks – just plain JavaScript, _hyperscript for declarative UI interactions, and the GUN and WebRTC APIs. The UI is intentionally simple and uncluttered, focusing on core functionality.
 
 ### HTML and Basic UI Structure
 
@@ -117,14 +118,16 @@ The `index.html` sets up the basic page structure, loads necessary scripts, and 
   <link rel="stylesheet" href="https://startr.style/style.css">
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app" class="container fade-transition fade-in"></div>
 
   <!-- Include GUN (for decentralized DB) -->
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gun/sea.js"></script> <!-- security module -->
   <!-- Include HyperScript library for UI creation -->
-  <script src="https://unpkg.com/hyperscript"></script>
+  <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
   <!-- Our application scripts -->
+  <script src="gun.js"></script>
+  <script src="webrtc.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
@@ -133,11 +136,37 @@ The `index.html` sets up the basic page structure, loads necessary scripts, and 
 A few notes on the above setup:
 
 - We load **GUN.js** from a CDN for convenience (including the `sea.js` module for user auth and encryption). This allows using `Gun()` globally in our scripts.
-- We include a HyperScript script. This library provides the `h()` function to create DOM elements in a declarative way. (HyperScript helps us keep the UI dynamic while still using vanilla JS – it's basically a tiny helper to create elements like `h('div.container', { onclick: handler }, "Text")` instead of manual `document.createElement` calls.)
-- The app's main code is in `app.js`, which runs after GUN and HyperScript are available.
-- We have a `<div id="app"></div>` which our script will use as the mounting point for the UI components.
+- We include **_hyperscript** for declarative UI interactions. This library allows us to define event handlers and interactive behaviors directly in HTML using the `_` attribute, reducing the need for JavaScript event listeners.
+- The app's main code is separated into modular files:
+  - `gun.js` - Handles GUN database integration and user authentication
+  - `webrtc.js` - Manages WebRTC connections for video/audio calls
+  - `app.js` - Contains the main application logic and UI management
 
-The `style.css` is Startr Style's minimal styling framework. Startr.Style accelerates and standardizes web design through custom property helpers and utilities, all seamlessly integrated within the style attribute. This innovative approach streamlines styling, making it faster and more consistent across projects. By embedding the power of customization directly where it's needed, Startr.Style ensures a lean, efficient workflow without sacrificing flexibility or control.
+### _hyperscript for Declarative UI
+
+Unlike traditional web apps that set up event listeners in JavaScript, bla.gg uses _hyperscript to define UI behaviors directly in HTML:
+
+```html
+<button id="startCallBtn" 
+  _="on click 
+      add .loading to me
+      call app.handleStartCall() 
+      remove .loading from me">Start Call</button>
+```
+
+This approach keeps UI behavior close to the HTML elements themselves, making the code easier to read and maintain. Core application logic still resides in JavaScript files, exposed via the global `window.app` object:
+
+```javascript
+// In app.js - Expose methods to window for _hyperscript to access
+window.app = {
+  handleLogin: this.handleLogin.bind(this),
+  handleSignup: this.handleSignup.bind(this),
+  handleSendMessage: this.handleSendMessage.bind(this),
+  // ... other methods
+};
+```
+
+See [frontend/HYPERSCRIPT.md](frontend/HYPERSCRIPT.md) for detailed documentation on how we use _hyperscript in bla.gg.
 
 ### Custom HTTP Server
 
