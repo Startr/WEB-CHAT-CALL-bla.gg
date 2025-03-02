@@ -178,40 +178,6 @@ _="on load
             end">Need an account? Sign up</div>
     </div>
 
-    <div id="chat" class="chat-container wow animate__fadeIn" data-wow-duration="1s" style="display: none;">
-      <div class="contacts wow animate__fadeInDown" data-wow-delay="0.2s">
-        <input type="text" id="peerPub" placeholder="Peer's Public Key" 
-          _="on keyup[key=='Enter'] trigger click on #startCallBtn">
-        <button id="startCallBtn" 
-          _="on click 
-              add .loading to me
-              call app.handleStartCall() 
-              remove .loading from me">Start Call</button>
-      </div>
-      
-      <div id="messages" class="messages wow animate__fadeIn" data-wow-delay="0.3s"
-        _="on scroll
-            if @scrollTop <= 10 and @dataset.hasMore == 'true'
-              call app.loadMoreMessages()
-            end"></div>
-      
-      <div class="message-input wow animate__fadeInUp" data-wow-delay="0.4s">
-        <input type="text" id="messageInput" placeholder="Type a message..." 
-          _="on keyup[key=='Enter'] 
-              if @value is not empty 
-                call app.handleSendMessage() 
-                set @value to ''
-              end">
-        <button id="sendBtn" 
-          _="on click 
-              if #messageInput.value is not empty
-                add .loading to me
-                call app.handleSendMessage() 
-                remove .loading from me
-              end">Send</button>
-      </div>
-    </div>
-
     <div id="call" class="call-container wow animate__fadeIn" data-wow-duration="1s" style="display: none;">
       <div class="video-container wow animate__zoomIn" data-wow-delay="0.3s">
         <video id="localVideo" autoplay muted 
@@ -247,6 +213,42 @@ _="on load
               remove .loading from me">End Call</button>
       </div>
     </div>
+
+    <div id="chat" class="chat-container wow animate__fadeIn" data-wow-duration="1s" style="display: none;">
+      <div class="contacts wow animate__fadeInDown" data-wow-delay="0.2s">
+        <input type="text" id="peerPub" placeholder="Peer's Public Key" 
+          _="on keyup[key=='Enter'] trigger click on #startCallBtn">
+        <button id="startCallBtn" 
+          _="on click 
+              add .loading to me
+              call app.handleStartCall() 
+              remove .loading from me">Start Call</button>
+      </div>
+      
+      <div id="messages" class="messages wow animate__fadeIn" data-wow-delay="0.3s"
+        _="on scroll
+            if @scrollTop <= 10 and @dataset.hasMore == 'true'
+              call app.loadMoreMessages()
+            end"></div>
+      
+      <div class="message-input wow animate__fadeInUp" data-wow-delay="0.4s">
+        <input type="text" id="messageInput" placeholder="Type a message..." 
+          _="on keyup[key=='Enter'] 
+              if @value is not empty 
+                call app.handleSendMessage() 
+                set @value to ''
+              end">
+        <button id="sendBtn" 
+          _="on click 
+              if #messageInput.value is not empty
+                add .loading to me
+                call app.handleSendMessage() 
+                remove .loading from me
+              end">Send</button>
+      </div>
+    </div>
+
+
   </div>
 
   <!-- Theme toggle button -->
