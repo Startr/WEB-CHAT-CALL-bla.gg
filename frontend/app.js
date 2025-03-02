@@ -189,6 +189,10 @@ class BlaggApp {
       chatContainer.style.display = 'block';
       setTimeout(() => {
         chatContainer.classList.add('fade-in');
+        // Reinitialize WOW.js to animate newly visible elements
+        if (typeof WOW !== 'undefined') {
+          new WOW().init();
+        }
       }, 10);
     }, 300);
     
@@ -243,6 +247,10 @@ class BlaggApp {
         callContainer.style.display = 'block';
         setTimeout(() => {
           callContainer.classList.add('fade-in');
+          // Reinitialize WOW.js to animate newly visible elements
+          if (typeof WOW !== 'undefined') {
+            new WOW().init();
+          }
         }, 10);
       }, 300);
     } catch (err) {
@@ -268,6 +276,10 @@ class BlaggApp {
           callContainer.style.display = 'block';
           setTimeout(() => {
             callContainer.classList.add('fade-in');
+            // Reinitialize WOW.js to animate newly visible elements
+            if (typeof WOW !== 'undefined') {
+              new WOW().init();
+            }
           }, 10);
         }, 300);
       } catch (err) {
@@ -296,6 +308,10 @@ class BlaggApp {
         chatContainer.style.display = 'block';
         setTimeout(() => {
           chatContainer.classList.add('fade-in');
+          // Reinitialize WOW.js to animate newly visible elements
+          if (typeof WOW !== 'undefined') {
+            new WOW().init();
+          }
         }, 10);
       }, 300);
     }

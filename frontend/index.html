@@ -13,6 +13,8 @@
   <!-- Startr.Style CSS for basic layout -->
   <link rel="stylesheet" href="https://startr.style/style.css">
   <link rel="stylesheet" href="style.css">
+  <!-- Animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <style>
     video, div {
       border-radius: 10px;
@@ -69,6 +71,26 @@
     .shake {
       animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
+    
+    /* WOW.js animations */
+    .wow {
+      visibility: hidden; /* Hide elements until they're animated */
+    }
+    
+    /* Make animations slightly slower for a more elegant feel */
+    .animate__animated {
+      --animate-duration: 1.2s;
+    }
+    
+    /* Custom animation for connection status */
+    #connectionStatus {
+      transition: background-color 0.3s ease;
+    }
+    
+    /* Dark theme support for animations */
+    body.dark-theme .wow.animate__fadeIn {
+      --animate-duration: 1.5s;
+    }
   </style>
  
 </head>
@@ -98,12 +120,12 @@ _="on load
   <div id="connectionStatus" class="connecting">Connecting...</div>
 
   <div id="app" class="container fade-transition fade-in">
-    <header>
+    <header class="wow animate__fadeInDown" data-wow-duration="1s">
       <h1>bla.gg</h1>
       <div id="userStatus"></div>
     </header>
     
-    <div id="auth" class="auth-container" style="--shadow: 8; --m:0.2em; --p:1em; --bg: var(--container-bg); --br-sm: 1.6em;">
+    <div id="auth" class="auth-container wow animate__fadeIn" data-wow-duration="1.2s" style="--shadow: 8; --m:0.2em; --p:1em; --bg: var(--container-bg); --br-sm: 1.6em;">
       <form id="authForm" 
         _="on submit 
             halt
@@ -111,6 +133,7 @@ _="on load
             call app.handleLogin() 
             remove .loading from #loginBtn">
         <input type="text" id="username" placeholder="Username" autocomplete="username" required
+          class="wow animate__fadeInLeft" data-wow-delay="0.2s"
           _="on keyup[key=='Enter'] 
               if #password.value != '' 
                 trigger submit on #authForm
@@ -125,11 +148,12 @@ _="on load
             end">
         <div id="usernameStatus" class="status-message"></div>
         <input type="password" id="password" placeholder="Password" autocomplete="current-password" required
+          class="wow animate__fadeInLeft" data-wow-delay="0.4s"
           _="on keyup[key=='Enter'] 
               if #username.value != '' 
                 trigger submit on #authForm">
-        <button type="submit" id="loginBtn">Login</button>
-        <button type="button" id="signupBtn" 
+        <button type="submit" id="loginBtn" class="wow animate__fadeInUp" data-wow-delay="0.6s">Login</button>
+        <button type="button" id="signupBtn" class="wow animate__fadeInUp" data-wow-delay="0.7s"
           _="on click 
               add .loading to me
               if #usernameStatus.classList contains 'unavailable'
@@ -143,7 +167,7 @@ _="on load
                 remove .loading from me
               end">Sign Up</button>
       </form>
-      <div class="auth-toggle" 
+      <div class="auth-toggle wow animate__fadeIn" data-wow-delay="0.9s" 
         _="on click 
             if #authForm matches .signup-mode
               remove .signup-mode from #authForm
@@ -154,8 +178,8 @@ _="on load
             end">Need an account? Sign up</div>
     </div>
 
-    <div id="chat" class="chat-container" style="display: none;">
-      <div class="contacts">
+    <div id="chat" class="chat-container wow animate__fadeIn" data-wow-duration="1s" style="display: none;">
+      <div class="contacts wow animate__fadeInDown" data-wow-delay="0.2s">
         <input type="text" id="peerPub" placeholder="Peer's Public Key" 
           _="on keyup[key=='Enter'] trigger click on #startCallBtn">
         <button id="startCallBtn" 
@@ -165,13 +189,13 @@ _="on load
               remove .loading from me">Start Call</button>
       </div>
       
-      <div class="messages" id="messages" 
+      <div id="messages" class="messages wow animate__fadeIn" data-wow-delay="0.3s"
         _="on scroll
             if @scrollTop <= 10 and @dataset.hasMore == 'true'
               call app.loadMoreMessages()
             end"></div>
       
-      <div class="message-input">
+      <div class="message-input wow animate__fadeInUp" data-wow-delay="0.4s">
         <input type="text" id="messageInput" placeholder="Type a message..." 
           _="on keyup[key=='Enter'] 
               if @value is not empty 
@@ -188,14 +212,14 @@ _="on load
       </div>
     </div>
 
-    <div id="call" class="call-container" style="display: none;">
-      <div class="video-container">
+    <div id="call" class="call-container wow animate__fadeIn" data-wow-duration="1s" style="display: none;">
+      <div class="video-container wow animate__zoomIn" data-wow-delay="0.3s">
         <video id="localVideo" autoplay muted 
           _="on loadedmetadata add .loaded to me"></video>
         <video id="remoteVideo" autoplay 
           _="on loadedmetadata add .loaded to me"></video>
       </div>
-      <div class="call-controls">
+      <div class="call-controls wow animate__fadeInUp" data-wow-delay="0.5s">
         <button id="toggleMuteBtn" 
           _="on click 
               toggle .muted on me
@@ -226,7 +250,7 @@ _="on load
   </div>
 
   <!-- Theme toggle button -->
-  <button id="themeToggle" class="theme-toggle" 
+  <button id="themeToggle" class="theme-toggle wow animate__fadeInRight" data-wow-delay="1s" 
     _="on click 
         toggle .dark-theme on document.body
         if document.body.classList.contains('dark-theme')
@@ -248,7 +272,22 @@ _="on load
   <script src="gun.js"></script>
   <script src="webrtc.js"></script>
   <script src="app.js"></script>
+  <!-- WOW.js for scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
   <script>
+    // Initialize WOW.js
+    new WOW({
+      boxClass: 'wow',      // Class name for the elements to be animated
+      animateClass: 'animate__animated', // Animation CSS class (from animate.css)
+      offset: 0,            // Distance to the element before triggering
+      mobile: true,         // Enable on mobile devices
+      live: true,           // Act on asynchronously loaded content
+      callback: function(box) {
+        // Optional callback after animation
+      },
+      scrollContainer: null // Optional scroll container selector
+    }).init();
+    
     // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
