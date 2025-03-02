@@ -88,7 +88,7 @@ zoom:1.06;
 "
 _="on load 
      if localStorage.getItem('blagg_theme') == 'dark'
-       add .dark-theme to me
+       add .dark-theme to document.body
        set #themeToggle.innerHTML to '☀️'
      end
      
@@ -228,8 +228,8 @@ _="on load
   <!-- Theme toggle button -->
   <button id="themeToggle" class="theme-toggle" 
     _="on click 
-        toggle .dark-theme on <body/>
-        if <body/> matches .dark-theme
+        toggle .dark-theme on document.body
+        if document.body.classList.contains('dark-theme')
           localStorage.setItem('blagg_theme', 'dark')
           set @innerHTML to '☀️'
         else
