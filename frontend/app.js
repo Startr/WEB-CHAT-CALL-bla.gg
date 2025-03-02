@@ -151,8 +151,7 @@ class BlaggApp {
       if (result && result.err) {
         throw new Error(result.err);
       }
-      
-      alert('Signup successful! Now logging in...');
+       
       await this.handleLogin(); // Log in after signup
     } catch (err) {
       console.error('Signup error:', err);
